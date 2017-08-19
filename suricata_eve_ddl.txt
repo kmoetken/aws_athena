@@ -1,0 +1,60 @@
+CREATE EXTERNAL TABLE IF NOT EXISTS suricata.eve (
+  `timestamp` string,
+  flow_id string,
+  event_type string,
+  src_ip string,
+  src_port int,
+  dest_ip string,
+  dest_port int,
+  proto string,
+  tx_id int,
+  http struct<hostname:string,
+              url:string,
+              http_user_agent:string,
+              http_content_type:string,
+              http_refer:string,
+              http_method:string,
+              protocol:string,
+              status:int,
+              length:int
+              >,
+  alert struct<action:string,
+               gid:int,
+               signature_id:int,
+               rev:int,
+               signature:string,
+               category:string,
+               severity:int
+               >,
+  flow struct<pkts_toserver:int,
+              pkts_toclient:int,
+              bytes_toserver:int,
+              bytes_toclient:int,
+              start:string,
+              `end`:string,
+              age:int,
+              state:string,
+              reason:string,
+              alerted:BOOLEAN
+              >,
+  dns struct<type:string,
+             id:int,
+             rcode:string,
+             rrname:string,
+             rrtype:string,
+             ttl:int,
+             rdata:string
+             >,
+  tls struct<subject:string,
+             issuerdn:string,
+             fingerprint:string,
+             version:string,
+             notbefore:string,
+             notafter:string
+             >
+)
+ROW FORMAT SERDE 'org.openx.data.jsonserde.JsonSerDe'
+WITH SERDEPROPERTIES (
+  'serialization.format' = '1'
+) LOCATION 's3://s3name/'
+TBLPROPERTIES ('has_encrypted_data'='false');
